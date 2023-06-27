@@ -5,7 +5,7 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
-import { AuthenticationContetProvider } from "./services/authentication/authentication.context";
+import { AuthenticationContextProvider } from "./services/authentication/authentication.context";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -13,11 +13,11 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <AuthenticationContetProvider>
+    <AuthenticationContextProvider>
       <BrowserRouter>
         <App />
       </BrowserRouter>
-    </AuthenticationContetProvider>
+    </AuthenticationContextProvider>
   </React.StrictMode>
 );
 
