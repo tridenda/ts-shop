@@ -1,7 +1,7 @@
 import axios from "axios";
 import { CurrentUser } from "./authentication.context";
 
-interface ISignUpRequest {
+export interface ISignUpResponse {
   user: CurrentUser;
   status: string;
   message: string;
@@ -11,9 +11,9 @@ export const signUpRequest = async (
   fullname: string,
   email: string,
   password: string
-): Promise<ISignUpRequest> => {
+): Promise<ISignUpResponse> => {
   try {
-    const { data } = await axios.post<ISignUpRequest>(
+    const { data } = await axios.post<ISignUpResponse>(
       "http://localhost:8000/api/v1/user/signup",
       { fullname, email, password },
       {
@@ -23,8 +23,6 @@ export const signUpRequest = async (
         },
       }
     );
-
-    console.log(JSON.stringify(data, null, 4));
 
     return {
       user: data.user,

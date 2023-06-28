@@ -4,7 +4,7 @@ import { AuthenticationContext } from "../services/authentication/authentication
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const { currentUser, onSignUp } = useContext(AuthenticationContext);
+  const { onSignUp } = useContext(AuthenticationContext);
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",

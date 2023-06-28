@@ -7,6 +7,7 @@ export interface CurrentUser {
 }
 
 interface IAuthenticationContext {
+  readonly isAuthenticated: boolean;
   readonly currentUser: CurrentUser | null;
   readonly onSignUp: (
     fullname: string,
@@ -21,6 +22,7 @@ interface IAuthenticationContextProvider {
 }
 
 export const AuthenticationContext = createContext<IAuthenticationContext>({
+  isAuthenticated: false,
   currentUser: null,
   onSignUp: async () => undefined,
 });
@@ -28,6 +30,7 @@ export const AuthenticationContext = createContext<IAuthenticationContext>({
 export const AuthenticationContextProvider: FC<
   IAuthenticationContextProvider
 > = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [currentUser, setUserData] = useState<CurrentUser>({});
 
   const onSignUp = async (
@@ -35,14 +38,16 @@ export const AuthenticationContextProvider: FC<
     email: string,
     password: string,
     confirmPassword: string
-  ) => {
+  ): Promise<void> => {
     const signUpResponse = await signUpRequest(fullname, email, password);
-    console.log("ini new user: ", signUpResponse.user);
     await setUserData(signUpResponse.user);
+    await setIsAuthenticated(true);
   };
 
   return (
-    <AuthenticationContext.Provider value={{ currentUser, onSignUp }}>
+    <AuthenticationContext.Provider
+      value={{ isAuthenticated, currentUser, onSignUp }}
+    >
       {children}
     </AuthenticationContext.Provider>
   );
