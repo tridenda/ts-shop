@@ -13,6 +13,7 @@ const SignUp = () => {
   });
 
   const onFormChangeHandler = (event: FormEvent<EventTarget>): void => {
+    event.preventDefault();
     const target = event.target as HTMLInputElement;
 
     setFormData({

@@ -1,5 +1,5 @@
 import { FC, ReactNode, createContext, useState } from "react";
-import { signUpRequest } from "./authentication.service";
+import { signInRequest, signUpRequest } from "./authentication.service";
 
 export interface CurrentUser {
   fullname?: string;
@@ -15,6 +15,8 @@ interface IAuthenticationContext {
     password: string,
     confirmPassword: string
   ) => Promise<void>;
+  readonly onSignIn: (email: string, password: string) => Promise<void>;
+  readonly onSignOut: () => void;
 }
 
 interface IAuthenticationContextProvider {
@@ -25,6 +27,8 @@ export const AuthenticationContext = createContext<IAuthenticationContext>({
   isAuthenticated: false,
   currentUser: null,
   onSignUp: async () => undefined,
+  onSignIn: async () => undefined,
+  onSignOut: () => undefined,
 });
 
 export const AuthenticationContextProvider: FC<
@@ -44,9 +48,20 @@ export const AuthenticationContextProvider: FC<
     await setIsAuthenticated(true);
   };
 
+  const onSignIn = async (email: string, password: string): Promise<void> => {
+    const signInResponse = await signInRequest(email, password);
+    await setUserData(signInResponse.user);
+    await setIsAuthenticated(true);
+  };
+
+  const onSignOut = () => {
+    setUserData({});
+    setIsAuthenticated(false);
+  };
+
   return (
     <AuthenticationContext.Provider
-      value={{ isAuthenticated, currentUser, onSignUp }}
+      value={{ isAuthenticated, currentUser, onSignUp, onSignIn, onSignOut }}
     >
       {children}
     </AuthenticationContext.Provider>
