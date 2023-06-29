@@ -8,6 +8,7 @@ export interface CurrentUser {
 
 interface IAuthenticationContext {
   readonly isAuthenticated: boolean;
+  readonly error: string;
   readonly currentUser: CurrentUser | null;
   readonly onSignUp: (
     fullname: string,
@@ -25,6 +26,7 @@ interface IAuthenticationContextProvider {
 
 export const AuthenticationContext = createContext<IAuthenticationContext>({
   isAuthenticated: false,
+  error: "",
   currentUser: null,
   onSignUp: async () => undefined,
   onSignIn: async () => undefined,
@@ -35,6 +37,7 @@ export const AuthenticationContextProvider: FC<
   IAuthenticationContextProvider
 > = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
   const [currentUser, setUserData] = useState<CurrentUser>({});
 
   const onSignUp = async (
@@ -43,7 +46,18 @@ export const AuthenticationContextProvider: FC<
     password: string,
     confirmPassword: string
   ): Promise<void> => {
+    if (password != confirmPassword) {
+      setError("Password doesn't match!");
+      return;
+    }
+
     const signUpResponse = await signUpRequest(fullname, email, password);
+
+    if (signUpResponse.status === "Failed") {
+      setError(signUpResponse.message);
+      return;
+    }
+
     await setUserData(signUpResponse.user);
     await setIsAuthenticated(true);
   };
@@ -57,11 +71,19 @@ export const AuthenticationContextProvider: FC<
   const onSignOut = () => {
     setUserData({});
     setIsAuthenticated(false);
+    setError("");
   };
 
   return (
     <AuthenticationContext.Provider
-      value={{ isAuthenticated, currentUser, onSignUp, onSignIn, onSignOut }}
+      value={{
+        isAuthenticated,
+        error,
+        currentUser,
+        onSignUp,
+        onSignIn,
+        onSignOut,
+      }}
     >
       {children}
     </AuthenticationContext.Provider>

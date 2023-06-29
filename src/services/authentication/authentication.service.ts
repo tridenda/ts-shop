@@ -13,7 +13,7 @@ export const signUpRequest = async (
   password: string
 ): Promise<ISignUpSignInResponse> => {
   try {
-    const { data } = await axios.post<ISignUpSignInResponse>(
+    const { status, data } = await axios.post<ISignUpSignInResponse>(
       "http://localhost:8000/api/v1/user/signup",
       { fullname, email, password },
       {

@@ -4,7 +4,9 @@ import { AuthenticationContext } from "../services/authentication/authentication
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const { onSignUp } = useContext(AuthenticationContext);
+  const { isAuthenticated, error, onSignUp } = useContext(
+    AuthenticationContext
+  );
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
@@ -30,8 +32,13 @@ const SignUp = () => {
       formData.password,
       formData.confirmPassword
     );
-    navigate("/");
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated]);
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
@@ -118,9 +125,14 @@ const SignUp = () => {
                   onChange={onFormChangeHandler}
                 />
               </div>
+              {error && (
+                <div className="text-center text-md text-red-600">
+                  <span>{error}</span>
+                </div>
+              )}
               <button
                 type="submit"
-                className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
               >
                 Create an account
               </button>
