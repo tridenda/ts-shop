@@ -1,10 +1,12 @@
-import { FormEvent, useContext, useState } from "react";
+import { FormEvent, useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthenticationContext } from "../services/authentication/authentication.context";
 
 const SignIn = () => {
   const navigate = useNavigate();
-  const { onSignIn } = useContext(AuthenticationContext);
+  const { isAuthenticated, error, onSignIn } = useContext(
+    AuthenticationContext
+  );
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -23,8 +25,13 @@ const SignIn = () => {
   const onSignInHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     await onSignIn(formData.email, formData.password);
-    navigate("/");
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated]);
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
@@ -75,9 +82,14 @@ const SignIn = () => {
                   onChange={onFormChangeHandler}
                 />
               </div>
+              {error && (
+                <div className="text-center text-md text-red-600">
+                  <span>{error}</span>
+                </div>
+              )}
               <button
                 type="submit"
-                className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
               >
                 Sign in
               </button>

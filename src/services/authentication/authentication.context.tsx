@@ -53,19 +53,25 @@ export const AuthenticationContextProvider: FC<
 
     const signUpResponse = await signUpRequest(fullname, email, password);
 
-    if (signUpResponse.status === "Failed") {
-      setError(signUpResponse.message);
+    if (signUpResponse.status === "Success") {
+      setUserData(signUpResponse.user);
+      setIsAuthenticated(true);
       return;
     }
 
-    await setUserData(signUpResponse.user);
-    await setIsAuthenticated(true);
+    setError(signUpResponse.message);
   };
 
   const onSignIn = async (email: string, password: string): Promise<void> => {
     const signInResponse = await signInRequest(email, password);
-    await setUserData(signInResponse.user);
-    await setIsAuthenticated(true);
+
+    if (signInResponse.status === "Success") {
+      setUserData(signInResponse.user);
+      setIsAuthenticated(true);
+      return;
+    }
+
+    setError(signInResponse.message);
   };
 
   const onSignOut = () => {
